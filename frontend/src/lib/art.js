@@ -1,6 +1,3 @@
-// Small flat illustrations. Colours come from the page's CSS variables, so they follow the theme.
-// Everything here is a static string, never built from user-typed text.
-
 export const hash = (s) => {
   let h = 2166136261;
   for (const c of String(s)) {
@@ -19,7 +16,6 @@ export const logoSvg = () => `<svg viewBox="0 0 28 28" xmlns="http://www.w3.org/
 <path d="M7.500 10.500 14 7l6.500 3.500v7L14 21l-6.500-3.500z"/><path d="M7.500 10.500 14 14l6.500-3.500M14 14v7"/></g>
 </svg>`;
 
-/* A courier on a scooter, used beside the form and on error pages. */
 export const riderSvg = () => `<svg viewBox="0 0 360 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Courier on a scooter">
 <path d="M16 186H344" style="stroke:var(--line)" stroke-width="2" stroke-linecap="round"/>
 <path d="M300 186V92" style="stroke:var(--line)" stroke-width="2" stroke-dasharray="3 6" stroke-linecap="round"/>
@@ -46,7 +42,6 @@ export const riderSvg = () => `<svg viewBox="0 0 360 220" xmlns="http://www.w3.o
 </g>
 </svg>`;
 
-/* Empty table / not found. */
 export const emptySvg = () => `<svg viewBox="0 0 120 90" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
 <path d="M22 32 60 19l38 13v32L60 77 22 64z" style="fill:var(--accent-soft);stroke:var(--accent)" stroke-width="2" stroke-linejoin="round"/>
 <path d="M22 32l38 13 38-13M60 45v32" fill="none" style="stroke:var(--accent)" stroke-width="2" stroke-linejoin="round"/>

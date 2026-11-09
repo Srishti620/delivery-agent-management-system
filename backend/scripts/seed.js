@@ -1,8 +1,3 @@
-/**
- * Loads sample delivery agents (all data is fictional).
- *   npm run seed          add any sample agents that are missing (matched by email)
- *   npm run seed:reset    delete ALL agents first, then load the samples
- */
 const mongoose = require('mongoose');
 const env = require('../src/config/env');
 const { connectMongo } = require('../src/config/db');
@@ -51,7 +46,6 @@ const SAMPLE_AGENTS = [
     }
     console.log(`Seeded ${created} agent(s); ${SAMPLE_AGENTS.length - created} already existed.`);
 
-    // Writing straight to MongoDB bypasses the API, so invalidate cached lists ourselves (best effort).
     if (env.cache.enabled) {
       redis = createRedisClient();
       if (await waitForReady(redis)) {

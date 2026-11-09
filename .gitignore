@@ -1,16 +1,15 @@
 # dependencies
 node_modules/
 
-# environment files (real values stay local; the .env.example templates are committed)
 .env
 .env.*
 !.env.example
 
-# build output & test artifacts
+
 dist/
 coverage/
 
-# logs & OS/editor files
+
 *.log
 npm-debug.log*
 .DS_Store

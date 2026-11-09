@@ -1,19 +1,5 @@
 const crypto = require('crypto');
 
-/**
- * Thin Redis cache for agent reads.
- *
- * Keys (all prefixed, default prefix "dams"):
- *   <prefix>:agents:detail:<agentId>            one agent                 TTL = detailTtl
- *   <prefix>:agents:list:v<version>:<hash>      one list query            TTL = listTtl
- *   <prefix>:agents:list:version                counter, no TTL           bumped on every write
- *
- * List invalidation uses a version counter instead of deleting keys: bumping the counter makes every
- * existing list key unreachable at once (no KEYS/SCAN), and the orphaned entries simply expire.
- *
- * Every method is fail-open: if Redis is down or slow the app keeps serving from MongoDB.
- * Read helpers resolve to { status: 'HIT' | 'MISS' | 'BYPASS', value? }.
- */
 class CacheService {
   constructor(redis, options = {}) {
     this.redis = redis;
@@ -23,8 +9,6 @@ class CacheService {
     this.listTtl = options.listTtl ?? 60;
     this.logger = options.logger || console;
   }
-
-  /* ---------- keys ---------- */
 
   detailKey(agentId) {
     return `${this.prefix}:agents:detail:${agentId}`;
@@ -45,8 +29,6 @@ class CacheService {
     return `${this.prefix}:agents:list:v${version}:${hash}`;
   }
 
-  /* ---------- reads ---------- */
-
   getDetail(agentId) {
     return this._get(this.detailKey(agentId));
   }
@@ -55,11 +37,6 @@ class CacheService {
     return this._set(this.detailKey(agentId), value, this.detailTtl);
   }
 
-  /**
-   * Looks up a list page. The returned `key` embeds the list version read *before* the database query,
-   * so if a write bumps the version while the query is running, the (possibly stale) result is stored
-   * under an old key that is never read again.
-   */
   async getList(query) {
     const version = await this._listVersion();
     if (version === null) return { status: 'BYPASS' };
@@ -70,8 +47,6 @@ class CacheService {
   setList(key, value) {
     return this._set(key, value, this.listTtl);
   }
-
-  /* ---------- invalidation (call AFTER the database write succeeds) ---------- */
 
   async invalidateAfterCreate() {
     await this._bumpVersion();
@@ -95,8 +70,6 @@ class CacheService {
       return false;
     }
   }
-
-  /* ---------- internals ---------- */
 
   async _get(key) {
     if (!this.enabled) return { status: 'BYPASS' };
@@ -130,14 +103,11 @@ class CacheService {
     }
   }
 
-  /** Current list version, or null if the cache is unavailable. Seeds from the clock if the key is missing. */
   async _listVersion() {
     if (!this.enabled) return null;
     try {
       let version = await this.redis.get(this.versionKey());
       if (version === null || version === undefined) {
-        // Seed with a timestamp (NX = only if absent) so that if the counter is ever evicted or Redis is
-        // flushed, new versions can never collide with leftover list keys from an earlier incarnation.
         await this.redis.set(this.versionKey(), String(Date.now()), 'NX');
         version = await this.redis.get(this.versionKey());
       }

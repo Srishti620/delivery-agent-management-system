@@ -11,7 +11,6 @@ const {
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
-// Indian mobile number: 10 digits starting with 6-9, optionally written with +91, 91 or 0 in front.
 const INDIAN_MOBILE_RE = /^(?:\+?91|0)?([6-9]\d{9})$/;
 const PHONE_ERROR = 'Enter a valid 10 digit number';
 
@@ -19,8 +18,6 @@ const fail = (details) => {
   throw new ApiError(400, 'Validation failed', details);
 };
 const isPlainObject = (v) => v !== null && typeof v === 'object' && !Array.isArray(v);
-
-/* ---------- body fields: each rule returns { value } or { error } ---------- */
 
 const text = (name, min, max) => (raw) => {
   if (typeof raw !== 'string') return { error: `${name} must be a string` };
@@ -87,20 +84,15 @@ function parseBody(body, { required = [], requireAtLeastOne = false } = {}) {
   return out;
 }
 
-/** POST: core fields required; status / vehicleType fall back to schema defaults. */
 const validateCreate = (body) => parseBody(body, { required: CORE_FIELDS });
 
-/** PUT: full replacement of all mutable fields (vehicleType resets to 'none' if omitted). */
 function validateReplace(body) {
   const out = parseBody(body, { required: [...CORE_FIELDS, 'status'] });
   if (out.vehicleType === undefined) out.vehicleType = 'none';
   return out;
 }
 
-/** PATCH: any subset of mutable fields, at least one. */
 const validatePatch = (body) => parseBody(body, { requireAtLeastOne: true });
-
-/* ---------- path + query ---------- */
 
 function validateAgentId(raw) {
   const id = String(raw || '').toUpperCase();
@@ -138,7 +130,6 @@ function stringParam(name, raw, errors) {
   return value || undefined;
 }
 
-/** Returns a normalised query: { page, limit, sort, status?, serviceArea?, search? }. */
 function validateListQuery(query) {
   const errors = [];
   const page = intParam('page', query.page, DEFAULT_PAGE, 1, 1_000_000, errors);

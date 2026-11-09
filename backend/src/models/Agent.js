@@ -2,7 +2,6 @@ const crypto = require('crypto');
 const mongoose = require('mongoose');
 const { STATUSES, VEHICLE_TYPES } = require('../constants');
 
-/** Human-friendly public identifier, e.g. DA-1A2B3C4D. Unique-indexed; the service retries on collision. */
 function generateAgentId() {
   return `DA-${crypto.randomBytes(4).toString('hex').toUpperCase()}`;
 }
@@ -20,7 +19,6 @@ const agentSchema = new mongoose.Schema(
   { timestamps: true, versionKey: false }
 );
 
-// Supports the common list filters (status / serviceArea) with newest-first ordering.
 agentSchema.index({ status: 1, serviceArea: 1, createdAt: -1 });
 agentSchema.index({ createdAt: -1 });
 

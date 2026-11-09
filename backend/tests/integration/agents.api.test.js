@@ -14,7 +14,6 @@ let redis;
 let cache;
 let app;
 
-/** Unique, valid payload per `n`. */
 const payload = (n = 1, overrides = {}) => ({
   fullName: `Test Agent ${n}`,
   phoneNumber: `+9198765432${String(n).padStart(2, '0')}`,
@@ -33,7 +32,7 @@ const createAgent = async (n = 1, overrides = {}) => {
 
 beforeAll(async () => {
   mongo = await startMongo();
-  await Agent.syncIndexes(); // make sure the unique indexes exist before testing 409s
+  await Agent.syncIndexes(); 
   redis = new RedisMock();
   cache = new CacheService(redis, { prefix: 'test', detailTtl: 300, listTtl: 60, logger: silent });
   app = createApp({ cache });
@@ -49,7 +48,6 @@ beforeEach(async () => {
   await redis.flushall();
 });
 
-/* ------------------------------------------------------------------ */
 describe('POST /api/agents (create)', () => {
   test('creates an agent and returns 201 with id, timestamps and Location', async () => {
     const res = await request(app).post('/api/agents').send(payload(1));
@@ -180,7 +178,6 @@ describe('GET /api/agents/:agentId (read one)', () => {
   });
 });
 
-/* ------------------------------------------------------------------ */
 describe('GET /api/agents (list)', () => {
   beforeEach(async () => {
     await createAgent(1, { fullName: 'Asha Rao', serviceArea: 'Kanpur', status: 'active' });
@@ -302,7 +299,6 @@ describe('PUT /api/agents/:agentId (full update)', () => {
   });
 });
 
-/* ------------------------------------------------------------------ */
 describe('PATCH /api/agents/:agentId (partial update)', () => {
   test('updates only the supplied fields', async () => {
     const created = await createAgent(1);
@@ -334,7 +330,6 @@ describe('PATCH /api/agents/:agentId (partial update)', () => {
   });
 });
 
-/* ------------------------------------------------------------------ */
 describe('DELETE /api/agents/:agentId', () => {
   test('deletes the agent (204), then it is gone (404)', async () => {
     const created = await createAgent(1);
@@ -353,7 +348,6 @@ describe('DELETE /api/agents/:agentId', () => {
   });
 });
 
-/* ------------------------------------------------------------------ */
 describe('Redis caching and invalidation', () => {
   const detailKey = (id) => cache.detailKey(id);
 
@@ -415,7 +409,6 @@ describe('Redis caching and invalidation', () => {
     const filtered = await request(app).get('/api/agents?status=inactive');
     expect(filtered.headers['x-cache']).toBe('MISS');
     expect(filtered.body.data).toHaveLength(1);
-    // two distinct list entries (v<number>:<hash>); the ":version" counter key is not one of them
     expect((await redis.keys('test:agents:list:v[0-9]*:*')).length).toBe(2);
   });
 
@@ -505,7 +498,6 @@ describe('Redis caching and invalidation', () => {
   });
 });
 
-/* ------------------------------------------------------------------ */
 describe('GET /health', () => {
   test('reports mongo and redis status', async () => {
     const res = await request(app).get('/health');

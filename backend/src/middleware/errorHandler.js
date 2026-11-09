@@ -5,7 +5,6 @@ function notFoundHandler(req, res) {
   res.status(404).json({ error: { status: 404, message: `Route not found: ${req.method} ${req.originalUrl}` } });
 }
 
-// eslint-disable-next-line no-unused-vars
 function errorHandler(err, req, res, next) {
   let status = 500;
   let message = 'Internal server error';

@@ -1,6 +1,5 @@
 const BASE = (import.meta.env.VITE_API_BASE_URL || '/api').replace(/\/$/, '');
 
-/** Error carrying the HTTP status and the API's per-field `details` (used to show form errors). */
 export class ApiError extends Error {
   constructor(status, message, details = []) {
     super(message);
@@ -32,8 +31,6 @@ async function request(path, { method = 'GET', body } = {}) {
 }
 
 const enc = encodeURIComponent;
-
-/** Resolves to { data: Agent[], meta: { page, limit, total, totalPages } } */
 export function listAgents(params = {}) {
   const query = new URLSearchParams(Object.entries(params).filter(([, v]) => v !== '' && v != null));
   return request(`/agents?${query}`);

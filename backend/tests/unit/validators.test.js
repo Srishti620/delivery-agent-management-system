@@ -14,7 +14,6 @@ const base = {
   serviceArea: 'Kanpur',
 };
 
-/** Runs `fn`, asserts it throws a 400 ApiError, and returns the sorted list of offending fields. */
 function failingFields(fn) {
   try {
     fn();

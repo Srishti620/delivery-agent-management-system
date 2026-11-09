@@ -1,10 +1,3 @@
-/**
- * "Migration" for this project: MongoDB is schemaless, so the only database setup is creating the
- * collection's indexes (including the unique indexes on agentId, email and phoneNumber).
- *
- * Run once per environment (and again after changing indexes in src/models/Agent.js):
- *   npm run db:indexes
- */
 const mongoose = require('mongoose');
 const { connectMongo } = require('../src/config/db');
 const Agent = require('../src/models/Agent');

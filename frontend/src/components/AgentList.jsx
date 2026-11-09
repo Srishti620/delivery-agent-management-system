@@ -23,7 +23,6 @@ function useDebounced(value, delay = 300) {
   return debounced;
 }
 
-/** Counts for the filter tabs: four tiny list requests (limit=1) that Redis serves after the first time. */
 function useCounts(reloadKey) {
   const [counts, setCounts] = useState(null);
   useEffect(() => {

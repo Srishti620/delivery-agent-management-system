@@ -5,7 +5,6 @@ const MAX_ID_ATTEMPTS = 3;
 
 const escapeRegex = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-/** Shape returned to API clients (and stored in Redis). Never leaks Mongo internals (_id). */
 function toDTO(doc) {
   return {
     agentId: doc.agentId,

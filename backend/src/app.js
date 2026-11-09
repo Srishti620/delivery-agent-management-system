@@ -12,12 +12,6 @@ const createAgentRouter = require('./routes/agentRoutes');
 const asyncHandler = require('./utils/asyncHandler');
 const { notFoundHandler, errorHandler } = require('./middleware/errorHandler');
 
-/**
- * App factory. Dependencies are injected so tests can pass an in-memory Redis
- * (or a deliberately broken one) without touching module state.
- *
- * @param {{ cache: import('./services/cacheService') }} deps
- */
 function createApp({ cache }) {
   const app = express();
 
@@ -27,7 +21,7 @@ function createApp({ cache }) {
   app.use(express.json({ limit: '100kb' }));
   if (env.nodeEnv !== 'test') app.use(morgan('dev'));
 
-  // The server already caches in Redis; stop browsers/proxies from adding a second, uncontrolled layer.
+ 
   app.use((req, res, next) => {
     res.set('Cache-Control', 'no-store');
     next();
